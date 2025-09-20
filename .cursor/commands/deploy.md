@@ -11,8 +11,8 @@
 ```bash
 # Docker ビルドとプッシュ
 docker-compose build
-docker tag pprotein:latest ghcr.io/kaz/pprotein:latest
-docker push ghcr.io/kaz/pprotein:latest
+docker tag pprotein:latest ghcr.io/mism-mism/pprotein:latest
+docker push ghcr.io/mism-mism/pprotein:latest
 
 # 本番環境起動
 docker-compose up -d
@@ -28,6 +28,6 @@ docker-compose up -d
 ## ロールバック手順
 問題が発生した場合は以前のイメージに戻します：
 ```bash
-docker tag ghcr.io/kaz/pprotein:previous ghcr.io/kaz/pprotein:latest
+docker tag ghcr.io/mism-mism/pprotein:previous ghcr.io/mism-mism/pprotein:latest
 docker-compose restart
 ```

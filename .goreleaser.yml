@@ -82,7 +82,7 @@ changelog:
 
 release:
   github:
-    owner: kaz
+    owner: mism-mism
     name: pprotein
   draft: false
   prerelease: auto
@@ -105,15 +105,15 @@ release:
     
     ### Using Docker
     ```bash
-    docker pull ghcr.io/kaz/pprotein:{{.Tag}}
+    docker pull ghcr.io/mism-mism/pprotein:{{.Tag}}
     ```
     
-    **Full Changelog**: https://github.com/kaz/pprotein/compare/{{.PreviousTag}}...{{.Tag}}
+    **Full Changelog**: https://github.com/mism-mism/pprotein/compare/{{.PreviousTag}}...{{.Tag}}
 
 dockers:
   - image_templates:
-      - "ghcr.io/kaz/pprotein:{{ .Tag }}"
-      - "ghcr.io/kaz/pprotein:latest"
+      - "ghcr.io/mism-mism/pprotein:{{ .Tag }}"
+      - "ghcr.io/mism-mism/pprotein:latest"
     dockerfile: Dockerfile
     build_flag_templates:
       - "--platform=linux/amd64"

@@ -37,7 +37,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/kaz/pprotein.git
+git clone https://github.com/mism-mism/pprotein.git
 cd pprotein
 
 # Build the application
@@ -335,7 +335,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- GitHub Issues: [Report bugs or request features](https://github.com/kaz/pprotein/issues)
+- GitHub Issues: [Report bugs or request features](https://github.com/mism-mism/pprotein/issues)
 - ISUCON Community: Share your experiences and get help
 
 ---
