@@ -1,0 +1,123 @@
+project_name: pprotein
+
+before:
+  hooks:
+    - go mod tidy
+    - cd view && npm ci && npm run build
+
+builds:
+  - id: pprotein
+    main: ./cli/pprotein
+    binary: pprotein
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+
+  - id: pprotein-agent
+    main: ./cli/pprotein-agent
+    binary: pprotein-agent
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+
+archives:
+  - id: default
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - README.md
+      - LICENSE
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+      - '^ci:'
+  groups:
+    - title: 'New Features'
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: 'Bug Fixes'
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: 'Performance Improvements'
+      regexp: '^.*?perf(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: 'Others'
+      order: 999
+
+release:
+  github:
+    owner: kaz
+    name: pprotein
+  draft: false
+  prerelease: auto
+  name_template: "{{.ProjectName}} v{{.Version}}"
+  header: |
+    ## pprotein v{{.Version}}
+    
+    Thanks to all contributors who made this release possible!
+  footer: |
+    ## Installation
+    
+    ### Download Binary
+    Download the appropriate binary for your platform from the assets below.
+    
+    ### Using Go
+    ```bash
+    go install github.com/kaz/pprotein/cli/pprotein@{{.Tag}}
+    go install github.com/kaz/pprotein/cli/pprotein-agent@{{.Tag}}
+    ```
+    
+    ### Using Docker
+    ```bash
+    docker pull ghcr.io/kaz/pprotein:{{.Tag}}
+    ```
+    
+    **Full Changelog**: https://github.com/kaz/pprotein/compare/{{.PreviousTag}}...{{.Tag}}
+
+dockers:
+  - image_templates:
+      - "ghcr.io/kaz/pprotein:{{ .Tag }}"
+      - "ghcr.io/kaz/pprotein:latest"
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"

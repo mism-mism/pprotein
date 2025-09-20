@@ -1,0 +1,82 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Main Server",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/cli/pprotein",
+      "env": {
+        "PORT": "9000"
+      },
+      "args": [],
+      "showLog": true,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Debug Agent",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/cli/pprotein-agent",
+      "env": {},
+      "args": [
+        "--port",
+        "19000",
+        "--git-dir",
+        "."
+      ],
+      "showLog": true,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Debug Agent (Custom)",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/cli/pprotein-agent",
+      "env": {},
+      "args": [
+        "--port",
+        "${input:agentPort}",
+        "--git-dir",
+        "${input:gitDirectory}"
+      ],
+      "showLog": true,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Debug Mock Server",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/cli/pprotein-mock",
+      "env": {},
+      "args": [],
+      "showLog": true,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Attach to Running Process",
+      "type": "go",
+      "request": "attach",
+      "mode": "local",
+      "processId": "${command:pickProcess}"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "gitDirectory",
+      "description": "Git repository directory path",
+      "default": ".",
+      "type": "promptString"
+    },
+    {
+      "id": "agentPort",
+      "description": "Agent port number", 
+      "default": "19000",
+      "type": "promptString"
+    }
+  ]
+}

@@ -235,6 +235,31 @@ make run &
 
 ## 🔧 Development
 
+### Cursor Integration
+
+This project includes custom Cursor commands for streamlined development workflow. Use `/` in Cursor Agent to access these commands:
+
+- **`/build`** - Build all binaries with frontend
+- **`/test`** - Run comprehensive test suite
+- **`/lint`** - Execute linters and code quality checks
+- **`/start-dev`** - Start development environment
+- **`/deploy`** - Deploy to production environment
+- **`/profile-isucon`** - Start ISUCON performance analysis
+- **`/create-pr`** - Create high-quality pull requests
+
+Commands are stored in `.cursor/commands/` and follow the patterns established in the [Cursor changelog](https://cursor.com/ja/changelog).
+
+### VS Code/Cursor Tasks
+
+Use Ctrl+Shift+P (Cmd+Shift+P on Mac) and search for "Tasks: Run Task" to access:
+
+- **Build All** - Complete project build
+- **Run Main Server** - Start pprotein server
+- **Run Agent** - Start profiling agent  
+- **Build Frontend** - Vue.js frontend build
+- **Test Go** - Go unit tests with race detection
+- **Lint Go/Frontend** - Code quality checks
+
 ### Building from Source
 
 ```bash
