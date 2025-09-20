@@ -7,9 +7,9 @@ import (
 	"github.com/kaz/pprotein/integration"
 )
 
-func Integrate(addr string) {
+func Integrate(addr string, gitDir string) {
 	log.Printf("[DEBUG_SERVER] Listening on %v\n", addr)
-	if err := http.ListenAndServe(addr, integration.NewDebugHandler()); err != nil {
+	if err := http.ListenAndServe(addr, integration.NewDebugHandler(gitDir)); err != nil {
 		log.Printf("failed to start debug server: %v\n", err)
 	}
 }
