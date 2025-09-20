@@ -1,0 +1,50 @@
+---
+alwaysApply: true
+description: pproteinプロジェクトの構造とアーキテクチャガイド
+---
+
+# pprotein プロジェクト構造ガイド
+
+pproteinはISUCON用のパフォーマンス分析ツールです。
+
+## 主要コンポーネント
+
+### エントリーポイント
+- [cli/pprotein/main.go](mdc:cli/pprotein/main.go) - メインのWebサーバー
+- [cli/pprotein-agent/main.go](mdc:cli/pprotein-agent/main.go) - エージェント
+- [cli/pprotein-mock/main.go](mdc:cli/pprotein-mock/main.go) - モックサーバー
+
+### 内部パッケージ (internal/)
+- `collect/` - データ収集機能の中核
+- `event/` - WebSocketベースのイベントハブ
+- `storage/` - データ永続化層（BoltDB使用）
+- `pprof/` - Go pprofプロファイル処理
+- `extproc/alp/` - HTTPログ解析（alp統合）
+- `extproc/slp/` - MySQLスローログ解析
+- `memo/` - メモ機能
+- `git/` - Gitリポジトリ操作
+
+### フレームワーク統合 (integration/)
+- `echo/`, `echov4/` - Echo統合
+- `gin/` - Gin統合
+- `mux/` - Gorilla Mux統合
+- `standalone/` - スタンドアロン統合
+
+### フロントエンド (view/)
+- Vue.js 3 + TypeScript + Vite
+- [view/src/App.vue](mdc:view/src/App.vue) - ルートコンポーネント
+- [view/src/router.ts](mdc:view/src/router.ts) - ルーティング設定
+
+## アーキテクチャパターン
+
+1. **コレクター+プロセッサーパターン**: データ収集と処理を分離
+2. **イベントドリブン**: [internal/event/hub.go](mdc:internal/event/hub.go)でリアルタイム通信
+3. **プラガブル統合**: フレームワーク毎の統合モジュール
+4. **レイヤードアーキテクチャ**: storage → collect → handler の階層構造
+
+## 開発時の注意点
+
+- `internal/`パッケージは外部から使用不可
+- 新機能は`collect.Options`を使ったコレクターパターンで実装
+- フロントエンドとAPIの通信は`/api`プレフィックス
+- 設定ファイルはYAML形式（[extproc/alp/alp.yml](mdc:internal/extproc/alp/alp.yml)等）
