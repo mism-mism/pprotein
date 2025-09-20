@@ -1,0 +1,104 @@
+---
+globs: "*.go"
+description: pproteinプロジェクトでのGo言語開発ベストプラクティス
+---
+
+# Go 開発ベストプラクティス
+
+## コードスタイル
+
+### インポート順序
+1. 標準ライブラリ
+2. サードパーティーライブラリ
+3. プロジェクト内パッケージ（`github.com/kaz/pprotein/`）
+
+```go
+import (
+    "context"
+    "fmt"
+    
+    "github.com/labstack/echo/v4"
+    "go.etcd.io/bbolt"
+    
+    "github.com/kaz/pprotein/internal/storage"
+)
+```
+
+### エラーハンドリング
+- 常にエラーをチェックし、適切に処理する
+- `panic`ではなく`error`を返す
+- コンテキストを含むエラーメッセージを作成
+
+```go
+if err := store.Save(data); err != nil {
+    return fmt.Errorf("failed to save data: %w", err)
+}
+```
+
+### 構造体設計
+- フィールドは機能毎にグループ化
+- ポインタレシーバーを使用（値が大きい場合）
+- インターフェースは小さく保つ
+
+## アーキテクチャパターン
+
+### コレクターパターン
+新しいデータ収集機能は[internal/collect/collector.go](mdc:internal/collect/collector.go)のパターンに従う：
+
+```go
+type Options struct {
+    Type     string
+    Ext      string
+    Store    storage.Storage
+    EventHub *event.Hub
+}
+
+func NewHandler(opts *Options) Handler {
+    return &handler{opts: opts}
+}
+```
+
+### ハンドラーパターン
+APIハンドラーは以下の構造を維持：
+
+```go
+func (h *handler) Register(g *echo.Group) error {
+    g.POST("/start", h.handleStart)
+    g.POST("/stop", h.handleStop)
+    g.GET("/list", h.handleList)
+    return nil
+}
+```
+
+### ストレージパターン
+データ永続化は[internal/storage/storage.go](mdc:internal/storage/storage.go)インターフェースを使用：
+
+```go
+type Storage interface {
+    Save(key string, data []byte) error
+    Load(key string) ([]byte, error)
+    List(prefix string) ([]string, error)
+}
+```
+
+## パフォーマンス考慮事項
+
+### メモリ管理
+- 大きなファイルは逐次処理
+- `defer`でリソース解放を保証
+- `context.Context`でタイムアウト制御
+
+### 並行処理
+- `golang.org/x/sync`パッケージを活用
+- データ競合を避けるためmutexを適切に使用
+- チャネルよりもmutex+スライスを優先（シンプルな場合）
+
+## テスト
+
+### ファイル命名
+- `*_test.go`
+- テーブルドリブンテストを推奨
+
+### モック
+- インターフェースを使った依存性注入
+- 実際のストレージではなくメモリ実装を使用

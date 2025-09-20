@@ -1,0 +1,175 @@
+---
+globs: "view/**/*.{ts,tsx,vue,js,jsx}"
+description: Vue.js/TypeScriptフロントエンド開発ガイドライン
+---
+
+# フロントエンド開発ガイドライン
+
+## Vue.js 3 Composition API
+
+### コンポーネント構造
+Single File Componentの標準構造：
+
+```vue
+<template>
+  <!-- HTML -->
+</template>
+
+<script setup lang="ts">
+// TypeScript with Composition API
+</script>
+
+<style scoped>
+/* CSS */
+</style>
+```
+
+### Composition API パターン
+- `<script setup>`構文を使用
+- `ref`と`reactive`を適切に使い分け
+- `computed`で派生状態を管理
+- `watch`で副作用を制御
+
+```typescript
+import { ref, computed, watch } from 'vue'
+
+const count = ref(0)
+const doubled = computed(() => count.value * 2)
+
+watch(count, (newValue) => {
+  console.log(`Count changed to ${newValue}`)
+})
+```
+
+## TypeScript ガイドライン
+
+### 型定義
+- インターフェースは`interface`で定義
+- ユニオン型を適切に使用
+- `any`の使用を避ける
+
+```typescript
+interface PProfileEntry {
+  id: string
+  timestamp: number
+  duration: number
+  samples: number
+}
+
+type LogLevel = 'info' | 'warn' | 'error'
+```
+
+### コンポーネントProps
+```typescript
+interface Props {
+  entry: PProfileEntry
+  showDetails?: boolean
+}
+
+const props = defineProps<Props>()
+```
+
+### Emit Events
+```typescript
+interface Emits {
+  (e: 'update', value: string): void
+  (e: 'close'): void
+}
+
+const emit = defineEmits<Emits>()
+```
+
+## 状態管理 (Vuex)
+
+### Store構造
+[view/src/store.ts](mdc:view/src/store.ts)のパターンに従う：
+
+```typescript
+interface State {
+  entries: PProfileEntry[]
+  groups: Group[]
+  loading: boolean
+}
+
+const mutations = {
+  SET_ENTRIES(state: State, entries: PProfileEntry[]) {
+    state.entries = entries
+  }
+}
+```
+
+### Actions
+```typescript
+const actions = {
+  async fetchEntries({ commit }: ActionContext<State, State>) {
+    const response = await fetch('/api/pprof/list')
+    const entries = await response.json()
+    commit('SET_ENTRIES', entries)
+  }
+}
+```
+
+## API通信
+
+### fetch APIの使用
+```typescript
+async function fetchData<T>(url: string): Promise<T> {
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+  return response.json()
+}
+```
+
+### エラーハンドリング
+- try-catch でエラーを適切に処理
+- ユーザーフレンドリーなエラーメッセージ
+- 接続エラーとAPIエラーを区別
+
+## コンポーネント設計
+
+### 単一責任の原則
+- 1つのコンポーネントは1つの責任を持つ
+- [view/src/components/](mdc:view/src/components/)の既存パターンに従う
+
+### Props Down, Events Up
+- データは props で下に流す
+- 変更は events で上に伝える
+
+### 再利用可能性
+- 共通コンポーネントは抽象的に設計
+- ビジネスロジックとUIロジックを分離
+
+## スタイリング
+
+### CSS設計
+- `scoped`スタイルを使用
+- CSS変数でテーマを管理
+- フレックスボックス・グリッドを活用
+
+```scss
+<style scoped>
+.entry-card {
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  
+  &:hover {
+    background-color: var(--hover-bg);
+  }
+}
+</style>
+```
+
+## パフォーマンス
+
+### レンダリング最適化
+- `v-if` vs `v-show` を適切に使い分け
+- 大きなリストには仮想スクロールを検討
+- `key` 属性を適切に設定
+
+### バンドルサイズ
+- 必要な機能のみインポート
+- 動的インポートでコード分割
+- Viteの最適化を活用
