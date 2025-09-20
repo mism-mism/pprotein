@@ -1,0 +1,306 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build All",
+      "type": "shell",
+      "command": "make",
+      "args": ["build"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": ["$go"],
+      "detail": "Build pprotein and pprotein-agent binaries"
+    },
+    {
+      "label": "Run Main Server",
+      "type": "shell",
+      "command": "make",
+      "args": ["run"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": ".*server started.*"
+        }
+      },
+      "detail": "Start the main pprotein server on port 9000"
+    },
+    {
+      "label": "Run Agent",
+      "type": "shell",
+      "command": "make",
+      "args": ["run-agent"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": ".*DEBUG_SERVER.*Listening.*"
+        }
+      },
+      "detail": "Start the pprotein agent on port 19000"
+    },
+    {
+      "label": "Run Agent with Custom Git Dir",
+      "type": "shell",
+      "command": "./pprotein-agent",
+      "args": [
+        "--git-dir",
+        "${input:gitDirectory}",
+        "--port",
+        "${input:agentPort}"
+      ],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "dependsOn": "Build pprotein-agent",
+      "detail": "Run agent with custom git directory and port"
+    },
+    {
+      "label": "Build Frontend",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "build"],
+      "options": {
+        "cwd": "${workspaceFolder}/view"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": ["$tsc"],
+      "detail": "Build Vue.js frontend"
+    },
+    {
+      "label": "Dev Frontend",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "dev"],
+      "options": {
+        "cwd": "${workspaceFolder}/view"
+      },
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(.*)$",
+          "file": 1
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": ".*Local:.*"
+        }
+      },
+      "detail": "Start Vite dev server for frontend"
+    },
+    {
+      "label": "Test Go",
+      "type": "shell",
+      "command": "go",
+      "args": ["test", "./..."],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": ["$go"],
+      "detail": "Run Go tests"
+    },
+    {
+      "label": "Test Frontend",
+      "type": "shell",
+      "command": "npm",
+      "args": ["test"],
+      "options": {
+        "cwd": "${workspaceFolder}/view"
+      },
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "detail": "Run frontend tests"
+    },
+    {
+      "label": "Lint Go",
+      "type": "shell",
+      "command": "golangci-lint",
+      "args": ["run"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": ["$go"],
+      "detail": "Run Go linter"
+    },
+    {
+      "label": "Lint Frontend",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "lint"],
+      "options": {
+        "cwd": "${workspaceFolder}/view"
+      },
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": ["$eslint-compact"],
+      "detail": "Run frontend linter"
+    },
+    {
+      "label": "Fix Frontend Lint",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "fix"],
+      "options": {
+        "cwd": "${workspaceFolder}/view"
+      },
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "detail": "Auto-fix frontend lint issues"
+    },
+    {
+      "label": "Clean",
+      "type": "shell",
+      "command": "make",
+      "args": ["clean"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "detail": "Clean build artifacts"
+    },
+    {
+      "label": "Docker Build",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["build"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "detail": "Build Docker images"
+    },
+    {
+      "label": "Docker Up",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["up", "-d"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "detail": "Start Docker environment"
+    },
+    {
+      "label": "Docker Down",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["down"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "detail": "Stop Docker environment"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "gitDirectory",
+      "description": "Git repository directory path",
+      "default": ".",
+      "type": "promptString"
+    },
+    {
+      "id": "agentPort",
+      "description": "Agent port number",
+      "default": "19000",
+      "type": "promptString"
+    }
+  ]
+}
