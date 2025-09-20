@@ -1,7 +1,6 @@
 # pprotein
 
 [![Go Version](https://img.shields.io/badge/go-1.23.3-blue.svg)](https://golang.org/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 **pprotein** is a comprehensive performance analysis tool designed specifically for ISUCON competitions and high-performance web applications. It provides real-time profiling, log analysis, and performance monitoring with an intuitive web interface.
 
@@ -325,7 +324,7 @@ When integrated, pprotein exposes these debug endpoints:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is a fork and does not include a license. Please check with the original repository for licensing information.
 
 ## 🙏 Acknowledgments
 
